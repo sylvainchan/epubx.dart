@@ -41,8 +41,6 @@ class ChapterReader {
 
       if (!bookRef.Content!.Html!.containsKey(firstFoundFile)) {
         continue;
-        throw Exception(
-            'Incorrect EPUB manifest: item with href = \"$firstFoundFile\" is missing.');
       }
 
       htmlContentFileRef = bookRef.Content!.Html![firstFoundFile];
@@ -55,7 +53,7 @@ class ChapterReader {
 
       result.add(chapterRef);
     }
-    ;
+
     return result;
   }
 }
