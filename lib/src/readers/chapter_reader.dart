@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import '../ref_entities/epub_book_ref.dart';
 import '../ref_entities/epub_chapter_ref.dart';
 import '../ref_entities/epub_text_content_file_ref.dart';
@@ -16,10 +18,10 @@ class ChapterReader {
       EpubBookRef bookRef, List<EpubNavigationPoint> navigationPoints) {
     var result = <EpubChapterRef>[];
     // navigationPoints.forEach((EpubNavigationPoint navigationPoint) {
-    for (var navigationPoint in navigationPoints){
+    for (var navigationPoint in navigationPoints) {
       String? contentFileName;
       String? anchor;
-      if (navigationPoint.Content?.Source ==null) continue;
+      if (navigationPoint.Content?.Source == null) continue;
       var contentSourceAnchorCharIndex =
           navigationPoint.Content!.Source!.indexOf('#');
       if (contentSourceAnchorCharIndex == -1) {
@@ -33,21 +35,27 @@ class ChapterReader {
       }
       contentFileName = Uri.decodeFull(contentFileName!);
       EpubTextContentFileRef? htmlContentFileRef;
-      if (!bookRef.Content!.Html!.containsKey(contentFileName)) {
+
+      final firstFoundFile = bookRef.Content!.AllFiles!.keys
+          .firstWhereOrNull((element) => element.contains(contentFileName!));
+
+      if (!bookRef.Content!.Html!.containsKey(firstFoundFile)) {
+        continue;
         throw Exception(
-            'Incorrect EPUB manifest: item with href = \"$contentFileName\" is missing.');
+            'Incorrect EPUB manifest: item with href = \"$firstFoundFile\" is missing.');
       }
 
-      htmlContentFileRef = bookRef.Content!.Html![contentFileName];
+      htmlContentFileRef = bookRef.Content!.Html![firstFoundFile];
       var chapterRef = EpubChapterRef(htmlContentFileRef);
-      chapterRef.ContentFileName = contentFileName;
+      chapterRef.ContentFileName = firstFoundFile;
       chapterRef.Anchor = anchor;
       chapterRef.Title = navigationPoint.NavigationLabels!.first.Text;
       chapterRef.SubChapters =
           getChaptersImpl(bookRef, navigationPoint.ChildNavigationPoints!);
 
       result.add(chapterRef);
-    };
+    }
+    ;
     return result;
   }
 }
