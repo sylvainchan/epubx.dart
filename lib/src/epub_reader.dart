@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archive/archive.dart';
+import 'package:image/image.dart';
 
 import 'entities/epub_book.dart';
 import 'entities/epub_byte_content_file.dart';
@@ -88,7 +89,7 @@ class EpubReader {
     result.AuthorList = epubBookRef.AuthorList;
     result.Author = epubBookRef.Author;
     result.Content = await readContent(epubBookRef.Content!);
-    result.CoverImage = await epubBookRef.readCover();
+    result.CoverImage = decodeImage(await epubBookRef.readCover() ?? []);
     var chapterRefs = await epubBookRef.getChapters();
     result.Chapters = await readChapters(chapterRefs);
 

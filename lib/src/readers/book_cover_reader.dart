@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:image/image.dart' as images;
 
 import '../ref_entities/epub_book_ref.dart';
 import '../ref_entities/epub_content_file_ref.dart';
@@ -9,7 +8,7 @@ import '../schema/opf/epub_manifest_item.dart';
 import '../schema/opf/epub_metadata_meta.dart';
 
 class BookCoverReader {
-  static Future<images.Image?> readBookCover(EpubBookRef bookRef) async {
+  static Future<List<int>?> readBookCover(EpubBookRef bookRef) async {
     var metaItems = bookRef.Schema!.Package!.Metadata!.MetaItems;
     if (metaItems == null || metaItems.isEmpty) return null;
 
@@ -84,9 +83,8 @@ class BookCoverReader {
           'Incorrect EPUB manifest: item with href = \"$coverImageFileName\" is missing.');
     }
 
-    var coverImageContent =
-        await coverImageContentFileRef!.readContentAsBytes();
-    var retval = images.decodeImage(coverImageContent);
-    return retval;
+    var coverImageContent = await coverImageContentFileRef.readContentAsBytes();
+    // var retval = images.decodeImage(coverImageContent);
+    return coverImageContent;
   }
 }
