@@ -67,7 +67,7 @@ class BookCoverReader {
     final correctPath =
         bookRef.Content!.AllFiles!.keys.firstWhereOrNull((element) {
       return element.contains(coverImageFileName!) ||
-          coverImageFileName!.contains(element.split('/').last);
+          coverImageFileName.contains(element.split('/').last);
     });
 
     if (correctPath == null) {
